@@ -1,26 +1,45 @@
 const swaggerJsDoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
 
 const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'API de Gestão de Consultas Médicas',
-      version: '1.0.0',
-      description: 'Documentação da API de Gestão de Consultas Médicas',
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Gestão de Consultas Médicas',
+            version: '1.0.0',
+        },
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT'
+                }
+            },
+            schemas: {
+                Paciente: {
+                    type: 'object',
+                    properties: {
+                        id: { type: 'integer' },
+                        nome: { type: 'string' },
+                        data_nascimento: { type: 'string', format: 'date' },
+                        cpf: { type: 'string' },
+                        telefone: { type: 'string' },
+                        email: { type: 'string', format: 'email' },
+                        historico: { type: 'string' },
+                        convenio: { type: 'string' }
+                    }
+                }
+            }
+        }
     },
-    servers: [
-      {
-        url: '<http://localhost:3000>',
-        description: 'Servidor local',
-      },
-    ],
-  },
-  apis: ['./src/routes/*.js'], // Caminho para os arquivos de rotas
+    apis: ['./src/routes/*.js']
 };
 
 const specs = swaggerJsDoc(options);
 
 module.exports = (app) => {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+    app.use('/api-docs',
+        swaggerUi.serve,
+        swaggerUi.setup(specs, { explorer: true })
+    );
 };
